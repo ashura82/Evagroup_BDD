@@ -32,12 +32,3 @@ Les différents états :
  - **CSF** = La base de données est parsée pour déclarer les serveurs CSF afin de monter le cluster. Un fichier de configuration est généré et envoyé en SSH vers les IP présentes dans la base. 
 
 > Le fichier d'état de la mise à jour est disponible dans **/srv/csf/script/state.conf**
-
-## Schéma mise à jour
-
-```mermaid
-graph LR
-B((Serveur)) -- Envoi ip et nom --> A[fichier tmpip.conf]
-A -- state = BDD--> C(Input BDD)
-D(Génération fichiers CSF) -- envoi vers CSF--> B
-C -- state = CSF--> D
