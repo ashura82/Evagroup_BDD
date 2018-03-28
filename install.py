@@ -6,8 +6,13 @@ import sys
 import sqlite3
 
 def installBdd():
+
+	print '######################'
+	print 'Installation de la BDD'
+	print '######################'
+	print ''
 	#Installation SQLITE et PIP
-	print 'Installation prérequis [En cours]'
+	print 'Installation prérequis      [En cours]'
 	subprocess.call('apt-get install python-pip sqlite3 openssh-server git -y > /dev/null 2>&1',shell=True)
 	#Installation lib paramiko
 	subprocess.call('pip install paramiko > /dev/null 2>&1',shell=True)
@@ -21,7 +26,9 @@ def installBdd():
 	#Copie fichiers vers dossier CSF
 	subprocess.call('cp ./mod_csf.conf /srv/csf',shell=True)
 	subprocess.call('cp ./tmpip.conf /srv/csf',shell=True)
-	subprocess.call('cp ./script/* /srv/csf/Script',shell=True)
+	subprocess.call('cp ./mod_csf.blocklists /srv/csf',shell=True)
+	subprocess.call('cp ./maj_csf.py /srv/csf',shell=True)
+	subprocess.call('cp ./script/* /srv/csf/script',shell=True)
 
 	subprocess.call('sed -i "s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g" /etc/ssh/sshd_config',shell=True)
 	subprocess.call('systemctl restart sshd',shell=True)
@@ -43,8 +50,6 @@ def configBdd():
     (id INTEGER NOT NULL, ip TEXT NOT NULL PRIMARY KEY, desc TEXT NOT NULL)''')
 	cursor.execute('''CREATE TABLE key
     (id INTEGER PRIMARY KEY NOT NULL, key TEXT NOT NULL, desc TEXT NOT NULL)''')
-    cursor.execute('''CREATE TABLE snort
-    (id INTEGER PRIMARY KEY NOT NULL, amert TEXT NOT NULL)''')
 	#Ajout de la clé pour la communication neighbors
 	keyCsf = 'fyoQ3Zm8nVvE0BGV'
 	cursor.execute('INSERT INTO key VALUES (1,"' + keyCsf + '","Key Cluster");')
@@ -82,3 +87,6 @@ configBdd()
 # Configuration Crontab #
 #########################
 cronMaj()
+
+print ''
+print 'Fin Installation'

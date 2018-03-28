@@ -25,12 +25,14 @@ def connSsh(a):
 # CSF #
 ####### 
 
-def majCsf():
+def majCsf(a):
 	neighbors = neighborsCsf()
 	keyCluster = keyCsf()
 	confCsf(neighbors,keyCluster)
 	sendPara(neighbors)
-	subprocess.call('echo "" > /srv/csf/script/state.conf',shell=True)
+
+	if a == 1:
+		subprocess.call('echo "" > /srv/csf/script/state.conf',shell=True)
 
 def neighborsCsf():
 	conn = sqlite3.connect('/srv/csf/bdd.db')
@@ -96,12 +98,16 @@ def sendPara(a):
 
 		for ip in a:
 
-			sftp = connSsh().open_sftp()
+			sftp = connSsh(ip).open_sftp()
 			source = '/srv/csf/csf'+ ip + '.conf'
 			destination = '/etc/csf/csf.conf'
 			sftp.put(source,destination)
+
+			fBlock = '/srv/csf/mod_csf.blocklists'
+			fOldBlock = '/etc/csf/csf.blocklists'
+			sftp.put(fBlock,fOldBlock)
+
 			sftp.close()
-			client.close()
 
 		subprocess.call('rm /srv/csf/csf*',shell=True)
 
@@ -126,16 +132,18 @@ def majBdd():
 
 	for line in lines:
 
-		ip = line.split(',')
-		ip = ip[0]
-		hostname = line.split(',')
-		hostname = hostname[1]
+		if len(line) > 1:
 
-		reqSql = 'INSERT INTO neighbors VALUES (' + str(nextId) + ',"' + ip + '","' + hostname + '");'
+			ip = line.split(',')
+			ip = ip[0]
+			hostname = line.split(',')
+			hostname = hostname[1]
 
-		cursor.execute(reqSql)
+			reqSql = 'INSERT INTO neighbors VALUES (' + str(nextId) + ',"' + ip + '","' + hostname + '");'
 
-		nextId += 1
+			cursor.execute(reqSql)
+
+			nextId += 1
 
 	conn.commit()
 	cursor.close()
@@ -150,7 +158,7 @@ def majBdd():
 
 def majSnort(a):
 
-	subprocess.call('wget https://www.snort.org/downloads/community/community-rules.tar.gz',shell=True)
+	subprocess.call('wget https://www.snort.org/downloads/community/community-rules.tar.gz > /dev/null 2>&1',shell=True)
 	tar = tarfile.open('./community-rules.tar.gz')
 	tar.extractall(path='/srv/csf/')
 	tar.close()
@@ -178,10 +186,9 @@ def majSnort(a):
 	for ip in a:
 	
 		sftp = connSsh(ip).open_sftp()
-		source = '/srv/cs/community-rules/snort.community'
+		source = '/srv/csf/community-rules/snort.community'
 		destination = '/etc/snort/rules/community.rules'
 		sftp.put(source,destination)
 		sftp.close()
-		client.close()
 
 	subprocess.call('rm -rf /srv/csf/community-rules',shell=True)
