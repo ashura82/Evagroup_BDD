@@ -16,11 +16,17 @@ Ce dossier contient tous les fichiers nécessaires au bon fonctionnement de l'au
 
 ## Lancement script installation
 
-Pour lancer l'automatisation de l'installation, il faut lancer la commande **python install.py**
+Pour lancer l'automatisation de l'installation, il faut suivre les étapes suivantes :
+
+- faire la mise à jour du serveur avec la commande **apt-get update && apt-get upgrade**
+- cloner le repository via la commande **git clone https://github.com/ashura82/Evagroup_BDD.git**
+- rentrer dans le dossier crée et lancer la commande **python install.py**
 
 >**Prérequis :**
 >  - être sous le compte **root** de la machine
 >  - connection à internet fonctionnelle
+>  - git installé sur le serveur
+>  - le script ne fonctionne que sur Debian. Le script a été testé sur Debian9
 
 ## Mise à jour Base de données
 Lors de l'installation, une tâche **CRON** est mise en place qui permet d'interroger l'état du serveur.
