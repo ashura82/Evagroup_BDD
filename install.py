@@ -63,7 +63,7 @@ def configBdd():
 
 def cronMaj():
 	fTmp = '/tmp/task.txt'
-	cmdEcho = 'echo "*/1 * * * * python /srv/csf/script/maj.py" >> ' + fTmp 
+	cmdEcho = 'echo "*/15 * * * * python /srv/csf/script/maj.py" >> ' + fTmp 
 	cmdCron = 'crontab ' + fTmp 
 	cmdRm = 'rm ' + fTmp
 	subprocess.call(cmdEcho,shell=True)

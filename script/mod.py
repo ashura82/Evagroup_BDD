@@ -162,6 +162,7 @@ def majSnort(a):
 	tar = tarfile.open('./community-rules.tar.gz')
 	tar.extractall(path='/srv/csf/')
 	tar.close()
+	subprocess.call('rm ./community-rules.tar.gz')
 
 	oldConf = open('/srv/csf/community-rules/community.rules','r')
 	newConf = open('/srv/csf/community-rules/snort.community','w')
